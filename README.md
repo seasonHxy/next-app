@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NextJS Health-Checked App on EKS
 
-## Getting Started
+This is a fully containerized, health-checked, and production-ready Next.js application with dark mode support and observability tooling. It includes:
 
-First, run the development server:
+- A `/status` endpoint for readiness/liveness checks
+- Git commit SHA injected at build time
+- A toggleable Tailwind dark mode landing page
+- Sentry error monitoring and custom Datadog metrics
+- GitHub Actions CI/CD pipeline pushing Docker image to AWS ECR
+- Kubernetes manifests with probes and LoadBalancer service
+
+### Run Locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Run CI Locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+pnpm lint
+pnpm test
+pnpm build
+```
 
-## Learn More
+### Deploy to EKS
 
-To learn more about Next.js, take a look at the following resources:
+Update image tag in k8s/deployment.yml
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Apply manifests:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+kubectl apply -f k8s/
+```

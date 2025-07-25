@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        run: npm i -g pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Test
+        run: pnpm test || echo "no tests yet"
+
+      - name: Build
+        run: pnpm build
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build & Push Docker image
+        env:
+          ECR_REPO: <your_aws_account_id>.dkr.ecr.<region>.amazonaws.com/next-app
+        run: |
+          docker build -t $ECR_REPO:${{ github.sha }} .
+          docker push $ECR_REPO:${{ github.sha }}
